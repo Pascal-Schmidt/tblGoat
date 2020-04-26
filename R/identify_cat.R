@@ -6,16 +6,14 @@
 #'
 #' @examples
 identify_cat <- function(df) {
-
   df %>%
     purrr::map_dfr(~ (is.factor(.) | is.character(.))) %>%
-    purrr::pmap(~c(...)) %>%
+    purrr::pmap(~ c(...)) %>%
     purrr::flatten_lgl() %>%
     unname() %>%
     df[, .] -> df
 
   return(df)
-
 }
 
 # library(gapminder)

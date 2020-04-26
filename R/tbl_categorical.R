@@ -15,11 +15,13 @@ categorical_tbl <- function(df, grouping_var = NULL,
   df <- identify_cat(df)
 
   df %>%
-    purrr::when(length(grouping_var) == 0 ~ .,
+    purrr::when(
+      length(grouping_var) == 0 ~ .,
 
-                # if grouping variable is not NULL, we remove missing
-                # values for the specified groups
-                ~ dplyr::filter_at(., vars(grouping_var), ~!is.na(.))) %>%
+      # if grouping variable is not NULL, we remove missing
+      # values for the specified groups
+      ~ dplyr::filter_at(., vars(grouping_var), ~ !is.na(.))
+    ) %>%
 
 
     # turn NA into character "Missing" and turn columns into character
@@ -34,25 +36,28 @@ categorical_tbl <- function(df, grouping_var = NULL,
     dplyr::summarise(n = dplyr::n()) %>%
     dplyr::group_by_at(c(grouping_var, "name")) %>%
     dplyr::mutate(value = str_remove_all(value, "^z_")) %>%
+    purrr::when(
+      length(grouping_var) == 0 ~ .,
 
-    purrr::when(length(grouping_var) == 0 ~ .,
-
-                # group by name + value (previously columns + levels of columns)
-                # in order to get a total
-                ~ dplyr::bind_rows(., dplyr::group_by(., name, value) %>%
-                                     dplyr::summarise(n = sum(n)))) %>%
+      # group by name + value (previously columns + levels of columns)
+      # in order to get a total
+      ~ dplyr::bind_rows(., dplyr::group_by(., name, value) %>%
+        dplyr::summarise(n = sum(n)))
+    ) %>%
 
     # calculate proportions
     dplyr::mutate(prop = ifelse(value != "Missing",
-                                paste0("(", round(n / sum(n[value != "Missing"]), 4) * 100, "%)"),
-                                "")) %>%
+      paste0("(", round(n / sum(n[value != "Missing"]), 4) * 100, "%)"),
+      ""
+    )) %>%
     tidyr::unite("count", n, prop, sep = " ") %>%
+    purrr::when(
+      length(grouping_var) == 0 ~ .,
 
-    purrr::when(length(grouping_var) == 0 ~ .,
-
-                # turn grouping_var levels into columns
-                ~ tidyr::pivot_wider(., names_from = grouping_var, values_from = count) %>%
-                  purrr::set_names(c(colnames(.)[-length(.)], "Total"))) %>%
+      # turn grouping_var levels into columns
+      ~ tidyr::pivot_wider(., names_from = grouping_var, values_from = count) %>%
+        purrr::set_names(c(colnames(.)[-length(.)], "Total"))
+    ) %>%
     dplyr::ungroup() %>%
     tidyr::unite("variable", name, value, sep = "_") %>%
     tidyr::separate_rows(variable) %>%
@@ -64,43 +69,50 @@ categorical_tbl <- function(df, grouping_var = NULL,
     dplyr::mutate_all(~ ifelse(is.na(.), "No Data", .)) %>%
 
     # removes everything in the variable name row except for the variable name itself
-    purrr::when(length(grouping_var) == 0 ~ dplyr::mutate(., count = ifelse(!variable %in% colnames(df),
-                                                                            count,
-                                                                            "")),
-                ~ mutate_at(., vars(colnames(.)[-1]),
-                            ~ ifelse(variable %in% colnames(df),
-                                     "",
-                                     as.character(.)))) %>%
+    purrr::when(
+      length(grouping_var) == 0 ~ dplyr::mutate(., count = ifelse(!variable %in% colnames(df),
+        count,
+        ""
+      )),
+      ~ mutate_at(
+        ., vars(colnames(.)[-1]),
+        ~ ifelse(variable %in% colnames(df),
+          "",
+          as.character(.)
+        )
+      )
+    ) %>%
     dplyr::rename("name" = variable) -> cat
 
   # some formatting (see formatting function)
   cat <- formatting(df = df, df_mode = cat, grouping_var, header, mode_tbl = "categorical") %>%
-    purrr::when(total ~ .,
-                # remove total if total = FALSE in function call
-                ~ dplyr::select(., -dplyr::contains("Total")))
+    purrr::when(
+      total ~ .,
+      # remove total if total = FALSE in function call
+      ~ dplyr::select(., -dplyr::contains("Total"))
+    )
 
   # only add p-values when we have a grouping variable,
   # the grouping variable has more than 1 category and
   # p_value = TRUE in function call
-  if(length(grouping_var) > 0 &
-     p_values_cat(df, grouping_var)[[1]][1] != "Stop" &
-     p_value) {
-
+  if (length(grouping_var) > 0 &
+    p_values_cat(df, grouping_var)[[1]][1] != "Stop" &
+    p_value) {
     df_p_values <- p_values_cat(df, grouping_var)
 
     # makes sure we insert p-values in the right order
     match(df_p_values$variable, stringr::str_remove_all(cat$`&nbsp;`, "\\*")) %>%
-    { dplyr::bind_cols(df_p_values, data.frame("Order" = .)) } %>%
+      {
+        dplyr::bind_cols(df_p_values, data.frame("Order" = .))
+      } %>%
       dplyr::arrange(Order) -> df_p_values
 
     cat %>%
       dplyr::mutate(`p-values` = "") -> cat
     cat[df_p_values$Order, "p-values"] <- df_p_values$`p-value`
-
   }
 
   return(cat)
-
 }
 # df <- gapminder
 # grouping_var <- NULL
