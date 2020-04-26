@@ -110,13 +110,13 @@ continuous_tbl <- function(df, grouping_var = NULL, digit = 2,
   return(cont)
 
 }
-df <- gapminder %>%
-  dplyr::filter(continent == "Asia")
-grouping_var <- c("continent", "x")
-header <- T
-total = F
-digit = 2
-modification = ""
-p_value <- TRUE
-
-continuous_tbl(gapminder)
+# df <- gapminder %>%
+#   dplyr::filter(continent == "Asia")
+# grouping_var <- c("continent", "x")
+# header <- T
+# total = F
+# digit = 2
+# modification = ""
+# p_value <- TRUE
+#
+# continuous_tbl(gapminder)

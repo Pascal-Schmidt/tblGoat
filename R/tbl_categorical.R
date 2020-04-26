@@ -102,15 +102,15 @@ categorical_tbl <- function(df, grouping_var = NULL,
   return(cat)
 
 }
-df <- gapminder
-grouping_var <- NULL
-grouping_var <- c("continent", "x")
-header <- T
-total = F
-digit = 2
-p_value <- TRUE
-categorical_tbl(gapminder)
-
-grouping_var = c("x", "continent")
-header = F
-p_value = F
+# df <- gapminder
+# grouping_var <- NULL
+# grouping_var <- c("continent", "x")
+# header <- T
+# total = F
+# digit = 2
+# p_value <- TRUE
+# categorical_tbl(gapminder)
+#
+# grouping_var = c("x", "continent")
+# header = F
+# p_value = F
