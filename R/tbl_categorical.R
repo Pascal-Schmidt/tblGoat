@@ -35,6 +35,7 @@ categorical_tbl <- function(df, grouping_var = NULL,
     dplyr::group_by_all() %>%
     dplyr::summarise(n = dplyr::n()) %>%
     dplyr::group_by_at(c(grouping_var, "name")) %>%
+    dplyr::arrange_at(vars(c("name", "value", grouping_var))) %>%
     dplyr::mutate(value = str_remove_all(value, "^z_")) %>%
     purrr::when(
       length(grouping_var) == 0 ~ .,
