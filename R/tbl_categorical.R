@@ -63,9 +63,9 @@ categorical_tbl <- function(df, grouping_var = NULL,
     tidyr::separate_rows(variable) %>%
 
     # only keeps unique values (the first one) in the variable column and removes all
-    # rows where there occurs a duplicate value in the variable column
+    # rows where there occurs a duplicate value in the variable column except for the levels and
     # the exception is missing, which will be included in the table regardless of how many times it occurs
-    .[sort(c(which(.$variable == "Missing"), match(unique(.$variable[.$variable != "Missing"]), .$variable))), ] %>%
+    .[-which(duplicated(.$variable) & .$variable %in% c(colnames(df), "Missing")), ] %>%
     dplyr::mutate_all(~ ifelse(is.na(.), "No Data", .)) %>%
 
     # removes everything in the variable name row except for the variable name itself
