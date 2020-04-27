@@ -13,6 +13,8 @@
 #' @examples
 tbl_goat <- function(df, grouping_var = NULL, digit = 2, p_value = TRUE,
                      total = TRUE, header = TRUE, kable = TRUE) {
+
+  options(warn=-1)
   if (length(grouping_var) == 0) {
     categorical_tbl(df = df) %>%
       dplyr::rename(
