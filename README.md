@@ -20,6 +20,11 @@ mtcars %>%
 
 ### Overall Summary Statistics Table
 
+```r
+tblgoat::tbl_goat(mtcars)
+```
+
+
 To create an overall summary statistics table, we just have to pass in a data frame into the `tbl_goat` function. 
 
 |Characteristic                     |Overall              |
