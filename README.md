@@ -2,6 +2,10 @@
 
 This is my first attempt at writing an R package. During my time at the BC Cancer Agency, I researched a lot of summary statistics packages online. Many of these packages produced beautiful tables but were not very flexible when it came to handling `NA` values for example. For this package, I wrote code which produces summary statistics tables that represents the data best in my opinion. The `tblgoat` package can produce overall summary statistics tables and can also produce tables by groups.  
 
+One thing to note for this package is that it transforms `factors` into `character` variables. Hence, if there are certain categories in the data set that have no values, they won't be represented in the table as count 0 (0%). They will just be left out. Something to be aware of.
+
+Also, this package can return `tibbles` if you specify `kable = FALSE` in the `tbl_goat` function. This is made available if you want to further work with a data frame rather than just getting the markdown format with `kable()`. 
+
 If you want to use more flexible and very sophisticated summary statistics packages, I would recommend using the [arsenal](https://cran.r-project.org/web/packages/arsenal/vignettes/tableby.html) package or the [gtsummary](https://cran.r-project.org/web/packages/gtsummary/vignettes/gallery.html) package. Both are available on CRAN. 
 
 ## Mini Vignette
