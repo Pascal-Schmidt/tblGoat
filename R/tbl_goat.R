@@ -12,7 +12,7 @@
 #'
 #' @examples
 tbl_goat <- function(df, grouping_var = NULL, digit = 2, p_value = TRUE,
-                     total = TRUE, header = TRUE, kabel = TRUE) {
+                     total = TRUE, header = TRUE, kable = TRUE) {
   if (length(grouping_var) == 0) {
     categorical_tbl(df = df) %>%
       dplyr::rename(
@@ -26,10 +26,28 @@ tbl_goat <- function(df, grouping_var = NULL, digit = 2, p_value = TRUE,
         "Overall" = Total
       ) -> cont
 
+    # remove rows where there are zero missing values
+    cont[which(pull(cont[, 1]) == "&nbsp;&nbsp;&nbsp;Missing"), -1] %>%
+      dplyr::select(-contains(c("Total", "p-value"))) %>%
+      dplyr::mutate_all(as.integer) %>%
+      purrr::pmap(~c(...)) %>%
+      purrr::map(~ unname(.)) %>%
+      purrr::map(~sum(.)) %>%
+      purrr::set_names(which(pull(cont[, 1]) == "&nbsp;&nbsp;&nbsp;Missing")) %>%
+      purrr::keep(~ .x == 0) %>%
+      names() %>%
+      as.integer() -> remove_missings_0
+
+    if(length(remove_missings_0) > 0) {
+
+      cont <- cont[-remove_missings_0, ]
+
+    }
+
     cont %>%
       dplyr::bind_rows(cat) %>%
       purrr::when(
-        kabel ~ knitr::kable(.),
+        kable ~ knitr::kable(.),
         ~.
       ) -> tbl_overall
 
@@ -44,10 +62,28 @@ tbl_goat <- function(df, grouping_var = NULL, digit = 2, p_value = TRUE,
       total = total, header = header, p_value = p_value
     )
 
+    # remove rows where there are zero missing values
+    cont[which(pull(cont[, 1]) == "&nbsp;&nbsp;&nbsp;Missing"), -1] %>%
+      dplyr::select(-contains(c("Total", "p-value"))) %>%
+      dplyr::mutate_all(as.integer) %>%
+      purrr::pmap(~c(...)) %>%
+      purrr::map(~ unname(.)) %>%
+      purrr::map(~sum(.)) %>%
+      purrr::set_names(which(pull(cont[, 1]) == "&nbsp;&nbsp;&nbsp;Missing")) %>%
+      purrr::keep(~ .x == 0) %>%
+      names() %>%
+      as.integer() -> remove_missings_0
+
+    if(length(remove_missings_0) > 0) {
+
+      cont <- cont[-remove_missings_0, ]
+
+    }
+
     cat %>%
       dplyr::bind_rows(cont) %>%
       purrr::when(
-        kabel ~ knitr::kable(.),
+        kable ~ knitr::kable(.),
         ~.
       ) -> tbl_stratified
 
