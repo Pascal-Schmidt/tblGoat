@@ -1,6 +1,6 @@
 # tblGoat
 
-This is my first attempt at writing an R package. During my time at the BC Cancer Agency, I researched a lot of summary statistics packages online. Many of these packages produced beautiful tables but were not very flexible when it came to handling `NA` values for example. For this package, I wrote code that produces summary statistics tables that produces are table that represents the data best in my opinion. The `tblgoat` package can produce overall summary statistics tables and can also produce tables by groups.  
+This is my first attempt at writing an R package. During my time at the BC Cancer Agency, I researched a lot of summary statistics packages online. Many of these packages produced beautiful tables but were not very flexible when it came to handling `NA` values for example. For this package, I wrote code which produces summary statistics tables that represents the data best in my opinion. The `tblgoat` package can produce overall summary statistics tables and can also produce tables by groups.  
 
 If you want to use more flexible and very sophisticated summary statistics packages, I would recommend using the [arsenal](https://cran.r-project.org/web/packages/arsenal/vignettes/tableby.html) package or the [gtsummary](https://cran.r-project.org/web/packages/gtsummary/vignettes/gallery.html) package. Both are available on CRAN. 
 
