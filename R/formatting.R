@@ -32,6 +32,9 @@ formatting <- function(df, df_mode, grouping_var, header = TRUE, mode_tbl) {
         )
       } %>%
       tidyr::unite(col = "group", grouping_var, sep = "_") %>%
+
+      # make sure no column switching
+      .[match(dplyr::pull(., group)[order(match(dplyr::pull(., group), colnames(df_mode)))], .$group), ] %>%
       dplyr::mutate(
         group = ifelse(stringr::str_detect(group, "Total"), "Total", group),
         col_name = paste0(group, " N = ", n, " (", prop, ")")
